@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Annotation App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Upload an Image for Annotation</h1>
+    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+
+    <h2>Annotations List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Status</th>
+                <th>Update Status</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for annotation in annotations %}
+                <tr>
+                    <td><img src="{{ url_for('static', filename='uploads/' + annotation[1]) }}" width="100"></td>
+                    <td>{{ annotation[2] }}</td>
+                    <td>
+                        <form action="{{ url_for('update_status', annotation_id=annotation[0]) }}" method="POST">
+                            <select name="status">
+                                <option value="Pending" {% if annotation[2] == "Pending" %}selected{% endif %}>Pending</option>
+                                <option value="Reviewed" {% if annotation[2] == "Reviewed" %}selected{% endif %}>Reviewed</option>
+                            </select>
+                            <input type="submit" value="Update">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('delete_annotation', annotation_id=annotation[0]) }}" method="POST">
+                            <input type="submit" value="Delete">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
